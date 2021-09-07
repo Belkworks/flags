@@ -60,7 +60,7 @@ class FlagString
                 @data[i] = true for i in pairs data when data[i]
 
     stringify: =>
-        chars = filter (keys @data), @\isSet
+        chars = filter (keys @data), @\has
         sort chars
         concat chars, ''
 
