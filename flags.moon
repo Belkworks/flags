@@ -8,18 +8,13 @@ keys = (t) -> [i for i in pairs t]
 filter = (t, fn) -> [v for i, v in pairs t when fn v, i, t]
 
 flagger = (string, flags = {}) ->
-    mode = 'reset'
+    mode = 'set'
     for char in *chars string
         switch char
             when '+' then mode = 'set'
             when '-' then mode = 'unset'
             when ' ', '\t', '\n' then noop
-            else
-                if mode == 'reset'
-                    flags = {}
-                    mode = 'set'
-
-                flags[char] = mode == 'set'
+            else flags[char] = mode == 'set'
 
     flags
 
