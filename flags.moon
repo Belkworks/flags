@@ -38,7 +38,7 @@ class FlagString
         for char in *chars flags
             @data[char] = true
 
-    isSet: (flag) => -- string flag -> bool is set
+    has: (flag) => -- <char> flag -> bool is set
         @data[flag] == true
 
     set: assertValidFlag (flag) =>
