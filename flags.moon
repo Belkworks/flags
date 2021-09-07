@@ -31,10 +31,10 @@ assertValidFlag = (fn) ->
 
 class FlagString
     new: (flags = '') => -- string? flags 
+        @data = {}
         @parse flags
 
     parse: (flags) =>
-        @data = {}
         for char in *chars flags
             @data[char] = true
 
