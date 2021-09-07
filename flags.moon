@@ -38,8 +38,13 @@ class FlagString
         for char in *chars flags
             @data[char] = true
 
+    clear: => @data = {}
+
     has: (flag) => -- <char> flag -> bool is set
         @data[flag] == true
+
+    hasNot: (flag) => -- <char> flag -> <bool> is not set
+        not @has flag
 
     set: assertValidFlag (flag) =>
         @data[flag] = true
