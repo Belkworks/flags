@@ -48,17 +48,16 @@ class FlagString
     hasNot: (flag) => -- <char> flag -> <bool> is not set
         not @has flag
 
-    set: selfy assertValidFlag (flag) =>
-        @data[flag] = true
+    set: selfy assertValidFlag (flag, value = true) =>
+        @data[flag] = if value
+            true
+        else nil
 
     unset: selfy assertValidFlag (flag) =>
         @data[flag] = nil
     
     flip: assertValidFlag (flag) =>
-        if @has flag
-            @unset flag
-        else @set flag
-        
+        @set flag, not @has flag
         @has flag
 
     apply: selfy (change) => -- string,table change
@@ -66,10 +65,7 @@ class FlagString
             when 'string' then flagger change, @data
             when 'table'
                 data = assert change.data, 'invalid table to apply'
-                for i, v in pairs data
-                    @data[i] = if v
-                        true
-                    else nil
+                @set i, v for i, v in pairs data
 
     stringify: =>
         chars = filter (keys @data), @\has
