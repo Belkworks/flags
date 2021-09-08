@@ -92,18 +92,21 @@ do
     hasNot = function(self, flag)
       return not self:has(flag)
     end,
-    set = selfy(assertValidFlag(function(self, flag)
-      self.data[flag] = true
+    set = selfy(assertValidFlag(function(self, flag, value)
+      if value == nil then
+        value = true
+      end
+      if value then
+        self.data[flag] = true
+      else
+        self.data[flag] = nil
+      end
     end)),
     unset = selfy(assertValidFlag(function(self, flag)
       self.data[flag] = nil
     end)),
     flip = assertValidFlag(function(self, flag)
-      if self:has(flag) then
-        self:unset(flag)
-      else
-        self:set(flag)
-      end
+      self:set(flag, not self:has(flag))
       return self:has(flag)
     end),
     apply = selfy(function(self, change)
@@ -113,11 +116,7 @@ do
       elseif 'table' == _exp_0 then
         local data = assert(change.data, 'invalid table to apply')
         for i, v in pairs(data) do
-          if v then
-            self.data[i] = true
-          else
-            self.data[i] = nil
-          end
+          self:set(i, v)
         end
       end
     end),
