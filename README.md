@@ -31,8 +31,8 @@ flags:has('d') -- false
 
 ### Modifying a FlagString
 
-**set**: `flags:set(char flag) -> self`  
-Sets `flag`
+**set**: `flags:set(char flag, any value = true) -> self`  
+Sets `flag` to the truthiness of `value`.
 ```lua
 flags:set('d'):has('d') -- true
 ```
@@ -63,6 +63,7 @@ flags:apply('+ef-d'):stringify() -- 'abcef'
 ```
 If `delta` is a table, flags will be set via truthiness of keys.
 ```lua
+-- state: abcd
 flags:apply({e = true, f = true, d = false}):stringify() -- 'abcef'
 ```
 
@@ -74,7 +75,7 @@ Returns the FlagString's current state as a string.
 flags:stringify() -- 'abcef'
 ```
 
-**tostring**: `tostring(flags) -> string`
+**tostring**: `tostring(flags) -> string`  
 The same as **stringify**.
 ```lua
 tostring(flags) -- 'abcef'
