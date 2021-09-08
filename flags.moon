@@ -24,16 +24,23 @@ assertValidFlag = (fn) ->
         assert #flag == 1, 'flag must be a single character long!'
         fn @, flag, ...
 
+selfy = (fn) ->
+    (...) =>
+        fn @, ...
+        @
+
 class FlagString
     new: (flags = '') => -- string? flags 
         @data = {}
         @parse flags
 
+        @toggle = @flip
+
     parse: (flags) =>
         for char in *chars flags
             @data[char] = true
 
-    clear: => @data = {}
+    clear: selfy => @data = {}
 
     has: (flag) => -- <char> flag -> bool is set
         @data[flag] == true
@@ -41,18 +48,28 @@ class FlagString
     hasNot: (flag) => -- <char> flag -> <bool> is not set
         not @has flag
 
-    set: assertValidFlag (flag) =>
+    set: selfy assertValidFlag (flag) =>
         @data[flag] = true
 
-    unset: assertValidFlag (flag) =>
+    unset: selfy assertValidFlag (flag) =>
         @data[flag] = nil
+    
+    flip: assertValidFlag (flag) =>
+        if @has flag
+            @unset flag
+        else @set flag
+        
+        @has flag
 
-    apply: (change) => -- string,table change
+    apply: selfy (change) => -- string,table change
         switch type change
             when 'string' then flagger change, @data
             when 'table'
                 data = assert change.data, 'invalid table to apply'
-                @data[i] = true for i in pairs data when data[i]
+                for i, v in pairs data
+                    @data[i] = if v
+                        true
+                    else nil
 
     stringify: =>
         chars = filter (keys @data), @\has
