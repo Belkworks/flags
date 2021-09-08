@@ -43,13 +43,14 @@ Unsets `flag`.
 flags:unset('d'):has('d') -- false
 ```
 
-**flip**: `flags:flip(char flag) -> boolean`  
-Alternative call: `flags:toggle(char flag) -> boolean`  
+**flip**, **toggle**: `flags:flip(char flag) -> boolean`  
 Inverts the status of `flag` and returns the new value.
 ```lua
 flags:has('d') -- false
 flags:flip('d') -- true
 flags:has('d') -- true
+flags:toggle('d') -- false
+flags:has('d') -- false
 ```
 
 **apply**: `flags:flip(string/table delta) -> self`  
