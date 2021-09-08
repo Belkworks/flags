@@ -65,6 +65,13 @@ assertValidFlag = function(fn)
     return fn(self, flag, ...)
   end
 end
+local selfy
+selfy = function(fn)
+  return function(self, ...)
+    fn(self, ...)
+    return self
+  end
+end
 local FlagString
 do
   local _class_0
@@ -76,34 +83,44 @@ do
         self.data[char] = true
       end
     end,
-    clear = function(self)
+    clear = selfy(function(self)
       self.data = { }
-    end,
+    end),
     has = function(self, flag)
       return self.data[flag] == true
     end,
     hasNot = function(self, flag)
       return not self:has(flag)
     end,
-    set = assertValidFlag(function(self, flag)
+    set = selfy(assertValidFlag(function(self, flag)
       self.data[flag] = true
-    end),
-    unset = assertValidFlag(function(self, flag)
+    end)),
+    unset = selfy(assertValidFlag(function(self, flag)
       self.data[flag] = nil
+    end)),
+    flip = assertValidFlag(function(self, flag)
+      if self:has(flag) then
+        self:unset(flag)
+      else
+        self:set(flag)
+      end
+      return self:has(flag)
     end),
-    apply = function(self, change)
+    apply = selfy(function(self, change)
       local _exp_0 = type(change)
       if 'string' == _exp_0 then
         return flagger(change, self.data)
       elseif 'table' == _exp_0 then
         local data = assert(change.data, 'invalid table to apply')
-        for i in pairs(data) do
-          if data[i] then
+        for i, v in pairs(data) do
+          if v then
             self.data[i] = true
+          else
+            self.data[i] = nil
           end
         end
       end
-    end,
+    end),
     stringify = function(self)
       chars = filter((keys(self.data)), (function()
         local _base_1 = self
@@ -126,7 +143,8 @@ do
         flags = ''
       end
       self.data = { }
-      return self:parse(flags)
+      self:parse(flags)
+      self.toggle = self.flip
     end,
     __base = _base_0,
     __name = "FlagString"
